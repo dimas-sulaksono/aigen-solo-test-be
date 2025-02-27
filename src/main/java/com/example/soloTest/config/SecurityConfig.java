@@ -56,6 +56,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,"/api/user/update/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE,"/api/user/**").permitAll()
 
+                        .requestMatchers(HttpMethod.GET,"/api/product/category/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/product/category/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/api/product/category/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE,"/api/product/category/**").permitAll()
+
+
                         .anyRequest().authenticated()
                 )
                 // ngatur session untuk tidak menyimpan informasi user di dalam session tapi pake jwt
