@@ -48,4 +48,13 @@ public class Product {
 
     @ManyToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Cart> carts;
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() { updatedAt = LocalDateTime.now(); }
 }

@@ -43,10 +43,10 @@ public class User {
     @PrePersist
     public void onCreate() {
         createdAt = LocalDateTime.now();
-        //updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
-    //@PreUpdate
-    //public void onUpdate() { updatedAt = LocalDateTime.now(); }
+    @PreUpdate
+    public void onUpdate() { updatedAt = LocalDateTime.now(); }
 
 }

@@ -16,9 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -32,16 +37,13 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
 
-    //create cart
+    // add to cart
     @Transactional
-    public CartResponse createCart(CartRequest cartRequest) {
+    public CartResponse addToCart(CartRequest cartRequest) {
         try {
-            if (cartRequest.getQuantity() <= 0) {
-                throw new RuntimeException("Quantity must be greater than 0");
-            }
-
             User user = userRepository.findById(cartRequest.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
+
             Product product = productRepository.findById(cartRequest.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -49,14 +51,20 @@ public class CartService {
                 throw new RuntimeException("Stock not sufficient");
             }
 
-            Cart cart = new Cart();
-            cart.setUser(user);
-            cart.setProduct(product);
-            cart.setQuantity(cartRequest.getQuantity());
-
-            Cart savedCart = cartRepository.save(cart);
-            return convertToResponse(savedCart);
-
+            Optional<Cart> existingCart = cartRepository.findByUserAndProduct(user, product);
+            if (existingCart.isPresent()) {
+                Cart cart = existingCart.get();
+                cart.setQuantity(cartRequest.getQuantity());
+                Cart savedCart = cartRepository.save(cart);
+                return convertToResponse(savedCart);
+            } else {
+                Cart cart = new Cart();
+                cart.setUser(user);
+                cart.setProduct(product);
+                cart.setQuantity(cartRequest.getQuantity());
+                Cart savedCart = cartRepository.save(cart);
+                return convertToResponse(savedCart);
+            }
         } catch (DataNotFoundException e) {
             throw e;
         }
@@ -71,6 +79,19 @@ public class CartService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to find all carts: " + e.getMessage(), e);
         }
+    }
+
+    // find by user
+    public List<CartResponse> findByUser(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        List<Cart> cartList = cartRepository.findByUser(user);
+
+        return cartList
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     // convert to response

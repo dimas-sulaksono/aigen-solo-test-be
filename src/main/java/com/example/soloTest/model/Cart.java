@@ -34,4 +34,13 @@ public class Cart {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() { updatedAt = LocalDateTime.now(); }
 }
