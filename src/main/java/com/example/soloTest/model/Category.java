@@ -20,6 +20,6 @@ public class Category {
     @Column(name = "name", nullable = false)
     private String name;
 
-    //@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    //private List<Product> products;
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private List<Product> products;
 }
