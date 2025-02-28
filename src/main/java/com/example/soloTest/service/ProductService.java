@@ -41,6 +41,7 @@ public class ProductService {
 
     private final String[] allowedImageTypes = {"image/jpeg", "image/png", "image/jpg"};
 
+    // fungsi buat simpan gambar
     public String saveImageFile(MultipartFile file, String name) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new RuntimeException("File is empty or not provided");
@@ -79,6 +80,7 @@ public class ProductService {
         return customFileName;
     }
 
+    // fungsi slug
     public static String toSlug(String input) {
         return input.toLowerCase()
                 .replaceAll("[^a-z0-9\\s]", "")
@@ -86,6 +88,7 @@ public class ProductService {
                 .trim();
     }
 
+    // create product
     @Transactional
     public ProductResponse createProduct(ProductRequest productRequest) {
         try {
@@ -113,6 +116,7 @@ public class ProductService {
         }
     }
 
+    // find all
     public Page<ProductResponse> findAll(int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
@@ -123,6 +127,7 @@ public class ProductService {
         }
     }
 
+    // find by name
     public List<ProductResponse> findByName(String name){
         try {
             return productRepository.findByNameContainingIgnoreCase(name)
@@ -134,7 +139,8 @@ public class ProductService {
         }
     }
 
-    public Optional<ProductResponse> findByIdAndStatusTrue(Long id){
+    //find by id
+    public Optional<ProductResponse> findById(Long id){
         try {
             return productRepository.findById(id).map(this::convertToResponse);
         } catch (Exception e) {
@@ -142,6 +148,7 @@ public class ProductService {
         }
     }
 
+    // update product
     @Transactional
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
         try {
@@ -170,6 +177,7 @@ public class ProductService {
         }
     }
 
+    // delete product
     @Transactional
     public void deleteProduct(Long id) {
         try {
@@ -184,6 +192,7 @@ public class ProductService {
         }
     }
 
+    // convert to response
     private ProductResponse convertToResponse(Product product) {
         ProductResponse response = new ProductResponse();
 

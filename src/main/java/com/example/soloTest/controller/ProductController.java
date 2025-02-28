@@ -27,6 +27,7 @@ public class ProductController {
     @Value("${file.IMAGE_DIR}")
     private String imageDirectory;
 
+    // create product
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<?> createProduct(@ModelAttribute @Valid @RequestBody ProductRequest productRequest) {
         try {
@@ -44,6 +45,7 @@ public class ProductController {
         }
     }
 
+    // find all
     @GetMapping
     public ResponseEntity<?> findAll(
             @RequestParam(defaultValue = "0") int page,
@@ -59,6 +61,7 @@ public class ProductController {
         }
     }
 
+    // search by product name
     @GetMapping("/search")
     public ResponseEntity<?> searchProduct(@RequestParam String name){
         try {
@@ -75,10 +78,11 @@ public class ProductController {
         }
     }
 
+    // get product by id
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getProductById(@PathVariable("id") Long id){
         try {
-            ProductResponse productResponse = productService.findByIdAndStatusTrue(id)
+            ProductResponse productResponse = productService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Product with id " + id + " not found"));
             return ResponseEntity
                     .ok(new ApiResponse<>(200, productResponse));
@@ -93,6 +97,7 @@ public class ProductController {
         }
     }
 
+    // update product
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<?> updateProduct(@Valid @PathVariable("id") Long id, @ModelAttribute @RequestBody ProductRequest productRequest){
         try {
@@ -110,6 +115,7 @@ public class ProductController {
         }
     }
 
+    // delete product
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         try {

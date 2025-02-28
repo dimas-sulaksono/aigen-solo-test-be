@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -66,17 +67,6 @@ public class UserController {
         }
     }
 
-    // get user by username
-    @GetMapping("/{username}")
-    public ResponseEntity<?> getUserByUsername(@PathVariable String username){
-        try{
-            UserResponse userResponse = userService.getUserByUsername(username);
-            return ResponseEntity.ok().body(new ApiResponse<>(200, userResponse));
-        } catch (Exception e){
-            return ResponseEntity.status(404).body(new ApiResponse<>(404, e.getMessage()));
-        }
-    }
-
     // get all users
     @GetMapping
     public ResponseEntity<?> getAllUser(
@@ -91,6 +81,23 @@ public class UserController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to retrieve user: " + e.getMessage()));
         }
+    }
+
+    // get user by username
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username){
+        try{
+            UserResponse userResponse = userService.findByUsername(username);
+            return ResponseEntity.ok().body(new ApiResponse<>(200, userResponse));
+        } catch (Exception e){
+            return ResponseEntity.status(404).body(new ApiResponse<>(404, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchByRole(@RequestParam String role) {
+        List<UserResponse> users = userService.findByRole(role);
+        return ResponseEntity.ok(new ApiResponse<>(200, users));
     }
 
     @DeleteMapping("/delete/{userId}")

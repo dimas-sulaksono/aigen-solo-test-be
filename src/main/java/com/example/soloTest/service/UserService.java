@@ -20,8 +20,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -75,16 +77,6 @@ public class UserService implements UserDetailsService {
         return convertToResponse(user);
     }
 
-    // cari user berdasarkan username
-    public UserResponse getUserByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isPresent()) {
-            return convertToResponse(user.get());
-        } else {
-            throw new RuntimeException("User not found with username: " + username);
-        }
-    }
-
     // get all users
     public Page<UserResponse> findAll(int page, int size) {
         try {
@@ -93,6 +85,28 @@ public class UserService implements UserDetailsService {
             return users.map(this::convertToResponse);
         } catch (Exception e) {
             throw new RuntimeException("Failed to find all users: " + e.getMessage(), e);
+        }
+    }
+
+    // find by username
+    public UserResponse findByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return convertToResponse(user.get());
+        } else {
+            throw new RuntimeException("User not found with username: " + username);
+        }
+    }
+
+    // find by role
+    public List<UserResponse> findByRole(String role) {
+        try {
+            return userRepository.findByRole(role)
+                    .stream()
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to search by role: " + e.getMessage(), e);
         }
     }
 
