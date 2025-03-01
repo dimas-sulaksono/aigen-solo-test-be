@@ -30,6 +30,9 @@ public class OrderService {
     private OrderItemRepository orderItemRepository;
 
     @Autowired
+    private OrderHistoryService orderHistoryService;
+
+    @Autowired
     private UserRepository userRepository;
 
     // find all
@@ -72,15 +75,17 @@ public class OrderService {
     }
 
     // update status
-    public OrderResponse updateOrderStatus(UUID orderId, OrderStatus newStatus) {
+    public OrderResponse updateOrderStatus(UUID orderId, OrderStatus newStatus, UUID changedBy) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order with ID " + orderId + " not found"));
 
+        orderHistoryService.saveOrderHistory(order, changedBy);
         order.setStatus(newStatus);
         orderRepository.save(order);
 
         return convertToResponse(order);
     }
+
 
     // find all by status
     public Page<OrderResponse> findAllByStatus(OrderStatus status, int page, int size) {

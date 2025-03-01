@@ -84,9 +84,10 @@ public class OrderController {
     @PutMapping("/{orderId}/status")
     public ResponseEntity<?> updateOrderStatus(
             @PathVariable UUID orderId,
-            @RequestParam OrderStatus status) {
+            @RequestParam OrderStatus status,
+            @RequestParam UUID changedBy) {
         try {
-            OrderResponse updatedOrder = orderService.updateOrderStatus(orderId, status);
+            OrderResponse updatedOrder = orderService.updateOrderStatus(orderId, status, changedBy);
             return ResponseEntity.ok(new ApiResponse<>(200, updatedOrder));
         } catch (Exception e) {
             return ResponseEntity
