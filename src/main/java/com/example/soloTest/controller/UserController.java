@@ -56,16 +56,12 @@ public class UserController {
 
     // login
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
-        try {
-            UserResponse userResponse = userService.loginUser(loginRequest);
-            String token = jwtUtil.generateToken(userResponse.getUsername());
-            return ResponseEntity.ok(new ApiResponse<String>(200, token));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse<String>(401, "invalid username or password"));
-        }
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        UserResponse userResponse = userService.loginUser(loginRequest);
+        String token = jwtUtil.generateToken(userResponse.getUsername());
+        return ResponseEntity.ok(new ApiResponse<>(200, token));
     }
+
 
     // get all users
     @GetMapping

@@ -5,6 +5,8 @@ import com.example.soloTest.dto.request.UserRequest;
 import com.example.soloTest.dto.response.UserResponse;
 import com.example.soloTest.exception.DataNotFoundException;
 import com.example.soloTest.exception.DuplicateDataException;
+import com.example.soloTest.exception.InvalidPasswordException;
+import com.example.soloTest.exception.UserNotFoundException;
 import com.example.soloTest.model.User;
 import com.example.soloTest.repository.UserRepository;
 import com.example.soloTest.security.CustomUserDetails;
@@ -69,11 +71,14 @@ public class UserService implements UserDetailsService {
     // login
     public UserResponse loginUser(LoginRequest loginRequest){
         Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
+
         if (userOptional.isEmpty()){
-            throw new RuntimeException("User not found with username: "+ loginRequest.getUsername());}
+            throw new UserNotFoundException("User not found with username: "+ loginRequest.getUsername());}
+
         User user = userOptional.get();
+
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");}
+            throw new InvalidPasswordException("Invalid password");}
         return convertToResponse(user);
     }
 
