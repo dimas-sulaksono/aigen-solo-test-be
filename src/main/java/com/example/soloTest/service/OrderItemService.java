@@ -41,11 +41,11 @@ public class OrderItemService {
         response.setQuantity(orderItem.getQuantity());
         response.setPrice(orderItem.getPrice());
 
-        response.setOrderId(orderItem.getOrder().getId());
-        response.setStatus(orderItem.getOrder().getStatus());
-        response.setTotalPrice(orderItem.getOrder().getTotalPrice());
+        //response.setOrderId(orderItem.getOrder().getId());
+        //response.setStatus(orderItem.getOrder().getStatus());
+        //response.setTotalPrice(orderItem.getOrder().getTotalPrice());
 
-        response.setUserId(orderItem.getOrder().getUser().getId());
+        //response.setUserId(orderItem.getOrder().getUser().getId());
 
         response.setProductId(orderItem.getProduct().getId());
         response.setProductName(orderItem.getProduct().getName());

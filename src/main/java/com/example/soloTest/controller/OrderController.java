@@ -1,6 +1,7 @@
 package com.example.soloTest.controller;
 
 import com.example.soloTest.dto.response.ApiResponse;
+import com.example.soloTest.dto.response.OrderDetailDTO;
 import com.example.soloTest.dto.response.OrderResponse;
 import com.example.soloTest.dto.response.PaginatedResponse;
 import com.example.soloTest.exception.DataNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -46,6 +48,7 @@ public class OrderController {
         }
     }
 
+    // get order by id
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderByUserId(@PathVariable UUID id) {
         try {
@@ -62,5 +65,20 @@ public class OrderController {
                     .body(new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to find product: " + e.getMessage()));
         }
     }
+
+    // get order detail
+    @GetMapping("/detail/{orderId}")
+    public ResponseEntity<?> getOrderDetail(@PathVariable UUID orderId) {
+        Optional<OrderDetailDTO> orderDetail = orderService.getOrderDetail(orderId);
+
+        if (orderDetail.isPresent()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, orderDetail.get()));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(404, "Order not found"));
+        }
+    }
+
+
 
 }
