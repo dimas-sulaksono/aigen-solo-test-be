@@ -5,6 +5,7 @@ import com.example.soloTest.dto.response.OrderItemResponse;
 import com.example.soloTest.dto.response.OrderResponse;
 import com.example.soloTest.model.Order;
 import com.example.soloTest.model.OrderItem;
+import com.example.soloTest.model.OrderStatus;
 import com.example.soloTest.repository.OrderItemRepository;
 import com.example.soloTest.repository.OrderRepository;
 import com.example.soloTest.repository.UserRepository;
@@ -70,6 +71,17 @@ public class OrderService {
         });
     }
 
+    // update status
+    public OrderResponse updateOrderStatus(UUID orderId, OrderStatus newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order with ID " + orderId + " not found"));
+
+        order.setStatus(newStatus);
+        orderRepository.save(order);
+
+        return convertToResponse(order);
+    }
+
 
     // convert to response
     private  OrderResponse convertToResponse(Order order) {
@@ -77,9 +89,9 @@ public class OrderService {
 
         response.setId(order.getId());
         response.setUserId(order.getUser().getId());
-        response.setUsername(order.getUser().getUsername());
-        response.setEmail(order.getUser().getEmail());
-        response.setRole(order.getUser().getRole());
+        //response.setUsername(order.getUser().getUsername());
+        //response.setEmail(order.getUser().getEmail());
+        //response.setRole(order.getUser().getRole());
         response.setStatus(order.getStatus());
         response.setTotalPrice(order.getTotalPrice());
         response.setCreatedAt(order.getCreatedAt());

@@ -9,29 +9,34 @@ import java.util.UUID;
 @Data
 public class OrderResponse {
     private UUID id;
-    private UserData user;
+    private UUID userId;
+    //private UserData user;
     private OrderStatus status;
     private Double totalPrice;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public OrderResponse() {
-        this.user = new UserData();
+    public void setUser(UUID userId) {
+        this.userId = userId;
     }
 
-    public void setUserId(UUID id) {
-        this.user.setId(id);
-    }
-
-    public void setUsername(String name) {
-        this.user.setName(name);
-    }
-
-    public void setEmail(String email) {
-        this.user.setEmail(email);
-    }
-
-    public void setRole(String role) {
-        this.user.setRole(role);
-    }
+//    public OrderResponse() {
+//        this.user = new UserData();
+//    }
+//
+//    public void setUserId(UUID id) {
+//        this.user.setId(id);
+//    }
+//
+//    public void setUsername(String name) {
+//        this.user.setName(name);
+//    }
+//
+//    public void setEmail(String email) {
+//        this.user.setEmail(email);
+//    }
+//
+//    public void setRole(String role) {
+//        this.user.setRole(role);
+//    }
 }

@@ -83,9 +83,9 @@ public class CheckoutService {
         OrderResponse response = new OrderResponse();
         response.setId(order.getId());
         response.setUserId(order.getUser().getId());
-        response.setUsername(order.getUser().getUsername());
-        response.setEmail(order.getUser().getEmail());
-        response.setRole(order.getUser().getRole());
+        //response.setUsername(order.getUser().getUsername());
+        //response.setEmail(order.getUser().getEmail());
+        //response.setRole(order.getUser().getRole());
         response.setStatus(order.getStatus());
         response.setTotalPrice(order.getTotalPrice());
         response.setCreatedAt(order.getCreatedAt());

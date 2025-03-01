@@ -5,6 +5,7 @@ import com.example.soloTest.dto.response.OrderDetailDTO;
 import com.example.soloTest.dto.response.OrderResponse;
 import com.example.soloTest.dto.response.PaginatedResponse;
 import com.example.soloTest.exception.DataNotFoundException;
+import com.example.soloTest.model.OrderStatus;
 import com.example.soloTest.service.CheckoutService;
 import com.example.soloTest.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,22 @@ public class OrderController {
                     .body(new ApiResponse<>(404, "Order not found"));
         }
     }
+
+    // update order status
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<?> updateOrderStatus(
+            @PathVariable UUID orderId,
+            @RequestParam OrderStatus status) {
+        try {
+            OrderResponse updatedOrder = orderService.updateOrderStatus(orderId, status);
+            return ResponseEntity.ok(new ApiResponse<>(200, updatedOrder));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(500, "Failed to update order status: " + e.getMessage()));
+        }
+    }
+
 
 
 
