@@ -4,6 +4,7 @@ import com.example.soloTest.dto.response.ApiResponse;
 import com.example.soloTest.dto.response.OrderResponse;
 import com.example.soloTest.dto.response.PaginatedResponse;
 import com.example.soloTest.exception.DataNotFoundException;
+import com.example.soloTest.service.CheckoutService;
 import com.example.soloTest.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,17 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private CheckoutService checkoutService;
+
+    // checkout
+    @PostMapping("/{userId}")
+    public ResponseEntity<OrderResponse> checkout(@PathVariable UUID userId) {
+        OrderResponse orderResponse = checkoutService.checkout(userId);
+        return ResponseEntity.ok(orderResponse);
+    }
+
+    // get all order
     @GetMapping
     public ResponseEntity<?> getAllOrder(
             @RequestParam(defaultValue = "0") int page,

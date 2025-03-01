@@ -24,7 +24,15 @@ public class CartResponse {
     }
 
     public void setUsername(String name) {
-        this.product.setName(name);
+        this.user.setName(name);
+    }
+
+    public void setEmail(String email) {
+        this.user.setEmail(email);
+    }
+
+    public void setRole(String role) {
+        this.user.setRole(role);
     }
 
     public void setProductId(Long id) {
@@ -40,6 +48,7 @@ public class CartResponse {
 class ProductData {
     private Long id;
     private String name;
+    private Double price;
 }
 
 @Data
