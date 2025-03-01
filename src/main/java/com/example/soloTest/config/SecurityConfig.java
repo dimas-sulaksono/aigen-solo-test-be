@@ -77,6 +77,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/api/order-item/**").permitAll()
 
                         .requestMatchers(HttpMethod.GET,"/api/order-history").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/order-history/**").permitAll()
 
                         .anyRequest().authenticated()
                 )

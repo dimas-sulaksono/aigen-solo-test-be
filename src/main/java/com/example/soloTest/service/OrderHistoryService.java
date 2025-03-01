@@ -35,6 +35,14 @@ public class OrderHistoryService {
         orderHistoryRepository.save(history);
     }
 
+    // get by order id
+    public Page<OrderHistoryResponse> getOrderHistoryByOrderId(UUID orderId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<OrderHistory> historyPage = orderHistoryRepository.findAllByOrderId(orderId, pageable);
+        return historyPage.map(this::convertToResponse);
+    }
+
+
     // convert to response
     private OrderHistoryResponse convertToResponse(OrderHistory history) {
         OrderHistoryResponse response = new OrderHistoryResponse();

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/order-history")
 public class OrderHistoryController {
@@ -17,6 +19,7 @@ public class OrderHistoryController {
     @Autowired
     private OrderHistoryService orderHistoryService;
 
+    // Get all order history
     @GetMapping
     public ResponseEntity<?> getAllOrderHistory(
             @RequestParam(defaultValue = "0") int page,
@@ -30,4 +33,22 @@ public class OrderHistoryController {
                     .body(new ApiResponse<>(500, "Failed to retrieve order history: " + e.getMessage()));
         }
     }
+
+    // Get order history by order id
+    @GetMapping("/{orderId}")
+    public ResponseEntity<?> getOrderHistoryByOrderId(
+            @PathVariable UUID orderId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Page<OrderHistoryResponse> history = orderHistoryService.getOrderHistoryByOrderId(orderId, page, size);
+            return ResponseEntity.ok(new PaginatedResponse<>(200, history));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(500, "Failed to retrieve order history: " + e.getMessage()));
+        }
+    }
+
+
 }

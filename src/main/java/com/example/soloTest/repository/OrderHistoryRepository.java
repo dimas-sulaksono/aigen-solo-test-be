@@ -10,5 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface OrderHistoryRepository extends JpaRepository<OrderHistory, Long> {
+
+    // find all by order id
     Page<OrderHistory> findAllByOrderId(UUID orderId, Pageable pageable);
 }
