@@ -95,6 +95,23 @@ public class OrderController {
         }
     }
 
+    // filter
+    @GetMapping("/filter")
+    public ResponseEntity<?> getOrdersByStatus(
+            @RequestParam OrderStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Page<OrderResponse> orders = orderService.findAllByStatus(status, page, size);
+            return ResponseEntity.ok(new PaginatedResponse<>(200, orders));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(500, "Failed to filter orders: " + e.getMessage()));
+        }
+    }
+
+
 
 
 

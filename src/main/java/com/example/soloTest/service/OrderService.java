@@ -82,6 +82,13 @@ public class OrderService {
         return convertToResponse(order);
     }
 
+    // find all by status
+    public Page<OrderResponse> findAllByStatus(OrderStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Order> orders = orderRepository.findAllByStatus(status, pageable);
+        return orders.map(this::convertToResponse);
+    }
+
 
     // convert to response
     private  OrderResponse convertToResponse(Order order) {
