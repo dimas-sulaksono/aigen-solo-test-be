@@ -51,11 +51,13 @@ public class OrderController {
 
     // get order by id
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderByUserId(@PathVariable UUID id) {
+    public ResponseEntity<?> getOrderByUserId(
+            @PathVariable UUID id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            OrderResponse order = orderService.findByUserId(id)
-                    .orElseThrow(() -> new RuntimeException("Order with id " + id + " not found"));
-            return ResponseEntity.ok(new ApiResponse<>(200, order));
+            Page<OrderResponse> orders = orderService.findByUserId(id, page, size);
+            return ResponseEntity.ok(new ApiResponse<>(200, orders));
         } catch (DataNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)

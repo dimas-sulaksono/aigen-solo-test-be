@@ -37,9 +37,9 @@ public class ProductService {
     @Value("${file.IMAGE_DIR}")
     private String imageDirectory;
 
-    private static final long maxFileSize = 5 * 1024 * 1024; // 5MB
+    private static final long maxFileSize = 15 * 1024 * 1024;
 
-    private final String[] allowedImageTypes = {"image/jpeg", "image/png", "image/jpg"};
+    private final String[] allowedImageTypes = {"image/jpeg", "image/png", "image/jpg", "image/svg" };
 
     // fungsi buat simpan gambar
     public String saveImageFile(MultipartFile file, String name) throws IOException {
@@ -190,6 +190,14 @@ public class ProductService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete product: " + e.getMessage(), e);
         }
+    }
+
+    // find by category name
+    public Page<ProductResponse> getProductsByCategory(String categoryName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findByCategoryName(categoryName, pageable);
+
+        return productPage.map(this::convertToResponse);
     }
 
     // convert to response

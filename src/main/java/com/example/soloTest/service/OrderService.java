@@ -47,9 +47,11 @@ public class OrderService {
     }
 
     // find by user id
-    public Optional<OrderResponse> findByUserId(UUID id) {
+    public Page<OrderResponse> findByUserId(UUID id, int page, int size) {
         try {
-            return orderRepository.findByUserId(id).map(this::convertToResponse);
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Order> orders = orderRepository.findByUserId(id, pageable);
+            return orders.map(this::convertToResponse);
         } catch (Exception e) {
             throw new RuntimeException("Failed to find order by user id: " + e.getMessage(), e);
         }

@@ -105,6 +105,8 @@ public class CartService {
         response.setRole(cart.getUser().getRole());
         response.setProductId(cart.getProduct().getId());
         response.setProductName(cart.getProduct().getName());
+        response.setProductPrice(cart.getProduct().getPrice());
+        response.setProductImagePath(cart.getProduct().getImagePath());
         response.setQuantity(cart.getQuantity());
         response.setCreatedAt(cart.getCreatedAt());
         response.setUpdatedAt(cart.getUpdatedAt());

@@ -20,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 public class SecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
@@ -40,15 +42,20 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration corsConfiguration = new CorsConfiguration();
                         corsConfiguration.setAllowCredentials(true); // mengizinkan kredensial
-                        corsConfiguration.addAllowedOrigin("http://localhost:3000"); // menizinkan apa saja yang bisa akses resource ini
-                        corsConfiguration.addAllowedHeader("*"); // mengizinkan semu header
-                        corsConfiguration.addAllowedMethod("*"); // mengizinkan semua method (post, put, get, delete, dll)
+                        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+                        //corsConfiguration.addAllowedOrigin("*"); // menizinkan apa saja yang bisa akses resource ini
+                        corsConfiguration.setAllowedHeaders(List.of("*"));
+                        //corsConfiguration.addAllowedHeader("*"); // mengizinkan semu header
+                        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                        //corsConfiguration.addAllowedMethod("*"); // mengizinkan semua method (post, put, get, delete, dll)
                         corsConfiguration.setMaxAge(3600L); // durasi dalam detik
                         return corsConfiguration;
                     }
                 }))
                 // pengaturan otorisasi (siapa aja yang bisa akses endpoint)
                 .authorizeHttpRequests(session -> session
+
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                         // user
                         .requestMatchers(HttpMethod.GET,"/api/user/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/user/**").permitAll()
@@ -79,7 +86,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/api/order-history").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/order-history/**").permitAll()
 
-                        .anyRequest().authenticated()
+                        //.anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // ngatur session untuk tidak menyimpan informasi user di dalam session tapi pake jwt
                 .sessionManagement(session -> session

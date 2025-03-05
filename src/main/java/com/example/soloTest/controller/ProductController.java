@@ -129,21 +129,12 @@ public class ProductController {
         }
     }
 
-
+    // get product by category
+    @GetMapping("/category")
+    public Page<ProductResponse> getProductsByCategory(
+            @RequestParam String categoryName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productService.getProductsByCategory(categoryName, page, size);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

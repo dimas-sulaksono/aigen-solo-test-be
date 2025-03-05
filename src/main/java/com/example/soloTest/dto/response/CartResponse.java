@@ -42,6 +42,14 @@ public class CartResponse {
     public void setProductName(String name) {
         this.product.setName(name);
     }
+
+    public void setProductPrice(Double price) {
+        this.product.setPrice(price);
+    }
+
+    public void setProductImagePath(String imagePath) {
+        this.product.setImagePath(imagePath);
+    }
 }
 
 @Data
@@ -49,6 +57,7 @@ class ProductData {
     private Long id;
     private String name;
     private Double price;
+    private String imagePath;
 }
 
 @Data
