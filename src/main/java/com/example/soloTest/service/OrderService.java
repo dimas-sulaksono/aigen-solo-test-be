@@ -9,6 +9,7 @@ import com.example.soloTest.model.OrderStatus;
 import com.example.soloTest.repository.OrderItemRepository;
 import com.example.soloTest.repository.OrderRepository;
 import com.example.soloTest.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,7 +51,7 @@ public class OrderService {
     public Page<OrderResponse> findByUserId(UUID id, int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
-            Page<Order> orders = orderRepository.findByUserId(id, pageable);
+            Page<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(id, pageable);
             return orders.map(this::convertToResponse);
         } catch (Exception e) {
             throw new RuntimeException("Failed to find order by user id: " + e.getMessage(), e);
@@ -77,16 +78,32 @@ public class OrderService {
     }
 
     // update status
+//    public OrderResponse updateOrderStatus(UUID orderId, OrderStatus newStatus, UUID changedBy) {
+//        Order order = orderRepository.findById(orderId)
+//                .orElseThrow(() -> new RuntimeException("Order with ID " + orderId + " not found"));
+//
+//        orderHistoryService.saveOrderHistory(order, changedBy);
+//        order.setStatus(newStatus);
+//        orderRepository.save(order);
+//
+//        return convertToResponse(order);
+//    }
+
+    @Transactional
     public OrderResponse updateOrderStatus(UUID orderId, OrderStatus newStatus, UUID changedBy) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order with ID " + orderId + " not found"));
 
-        orderHistoryService.saveOrderHistory(order, changedBy);
+        // Perbarui status order terlebih dahulu
         order.setStatus(newStatus);
         orderRepository.save(order);
 
+        // Baru simpan ke order history dengan status yang sudah diperbarui
+        orderHistoryService.saveOrderHistory(order, changedBy);
+
         return convertToResponse(order);
     }
+
 
 
     // find all by status

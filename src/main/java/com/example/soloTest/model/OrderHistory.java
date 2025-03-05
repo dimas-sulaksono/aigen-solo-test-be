@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -13,20 +12,23 @@ import java.util.UUID;
 @Entity
 @Table(name = "order_history")
 public class OrderHistory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_id", nullable = false)
-    private UUID orderId;
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;  // Relasi ke Order
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private OrderStatus status;
 
-    @Column(name = "changed_at", nullable = false, updatable = false)
+    @Column(name = "changed_at", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime changedAt = LocalDateTime.now();
 
-    @Column(name = "changed_by")
-    private UUID changedBy;
+    @ManyToOne
+    @JoinColumn(name = "changed_by")
+    private User changedBy;  // Relasi ke User yang mengubah
 }

@@ -25,6 +25,9 @@ public class CheckoutService {
     private OrderItemRepository orderItemRepository;
 
     @Autowired
+    private OrderHistoryService orderHistoryService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -35,29 +38,32 @@ public class CheckoutService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        // ambil semua item dari cart berdasarkan user
+        // Ambil semua item dari cart berdasarkan user
         List<Cart> cartItems = cartRepository.findByUser(user);
         if (cartItems.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart is empty");
         }
 
-        // hitung total harga pesanan
+        // Hitung total harga pesanan
         double totalPrice = cartItems.stream()
                 .mapToDouble(cart -> cart.getProduct().getPrice() * cart.getQuantity())
                 .sum();
 
-        // buat order baru
+        // Buat order baru
         Order order = new Order();
         order.setUser(user);
         order.setStatus(OrderStatus.PENDING);
         order.setTotalPrice(totalPrice);
         orderRepository.save(order);
 
-        // copy semua item dari cart ke order_items
+        // Simpan histori order pertama kali dibuat
+        orderHistoryService.saveOrderHistory(order, userId);
+
+        // Copy semua item dari cart ke order_items
         for (Cart cart : cartItems) {
             Product product = cart.getProduct();
 
-            // update stok di tabel produk (kurangi stok produk)
+            // Update stok produk
             if (product.getStock() < cart.getQuantity()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Not enough stock for product: " + product.getName());
@@ -65,19 +71,21 @@ public class CheckoutService {
             product.setStock(product.getStock() - cart.getQuantity());
             productRepository.save(product);
 
-            // simpan order_items
+            // Simpan order_items
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setProduct(product);
             orderItem.setQuantity(cart.getQuantity());
-            orderItem.setPrice((product.getPrice() * cart.getQuantity())); // sub total
+            orderItem.setPrice((product.getPrice() * cart.getQuantity())); // Subtotal
             orderItemRepository.save(orderItem);
         }
 
-        // kosongkan cart setelah checkout
+        // Kosongkan cart setelah checkout
         cartRepository.deleteByUser(user);
+
         return convertToResponse(order);
     }
+
 
     private OrderResponse convertToResponse(Order order) {
         OrderResponse response = new OrderResponse();
